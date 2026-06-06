@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>美式英語 IPA 音標練習</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f4f4f5;
+    --border: #e4e4e7;
+    --text: #09090b;
+    --text-muted: #71717a;
+    --primary: #18181b;
+    --primary-fg: #fafafa;
+    --accent: #6366f1;
+    --accent-light: #eef2ff;
+    --accent-fg: #ffffff;
+    --success: #22c55e;
+    --success-light: #f0fdf4;
+    --error: #ef4444;
+    --error-light: #fef2f2;
+    --warning: #f59e0b;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-logo .icon {
+    width: 32px; height: 32px;
+    background: var(--primary);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .header-logo h1 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .header-logo p {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .streak-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Main */
+  .main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* Mode selector */
+  .mode-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  .mode-tab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .mode-tab:hover { border-color: var(--accent); color: var(--accent); }
+  .mode-tab.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-fg);
+  }
+  .mode-tab .tab-icon { font-size: 18px; display: block; margin-bottom: 4px; }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  /* Flip Card */
+  .flip-card-container { perspective: 1000px; }
+  .flip-card {
+    width: 100%;
+    min-height: 220px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    cursor: pointer;
+  }
+  .flip-card.flipped { transform: rotateY(180deg); }
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    gap: 12px;
+  }
+  .flip-card-front {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+  }
+  .flip-card-back {
+    background: var(--primary);
+    color: var(--primary-fg);
+    transform: rotateY(180deg);
+  }
+  .word-display {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .meaning-display {
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+  .ipa-display {
+    font-size: 36px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+  }
+  .ipa-back { color: rgba(255,255,255,0.9); }
+  .tap-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    background: var(--surface-2);
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: var(--accent);
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.3s;
+  }
+  .progress-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Quiz options */
+  .quiz-question {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .quiz-question .big-ipa {
+    font-size: 56px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .quiz-question .big-word {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .quiz-question .sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .option-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    cursor: pointer;
+    font-size: 22px;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-align: center;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+  .option-btn.correct {
+    border-color: var(--success);
+    background: var(--success-light);
+    color: #16a34a;
+  }
+  .option-btn.wrong {
+    border-color: var(--error);
+    background: var(--error-light);
+    color: #dc2626;
+  }
+  .option-btn .option-word {
+    display: block;
+    font-size: 12px;
+    font-family: -apple-system, sans-serif;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0;
+  }
+
+  /* Feedback */
+  .feedback {
+    text-align: center;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 15px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: var(--success-light); color: #16a34a; }
+  .feedback.wrong-fb { background: var(--error-light); color: #dc2626; }
+
+  /* Navigation buttons */
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn:hover { background: var(--surface-2); }
+  .btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-fg);
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-accent {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  .btn-accent:hover { opacity: 0.85; }
+
+  /* Symbol reference panel */
+  .symbol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+  }
+  .symbol-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .symbol-item:hover, .symbol-item.active-sym {
+    background: var(--accent-light);
+    border-color: var(--accent);
+  }
+  .symbol-item .sym { font-size: 26px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif; color: var(--text); }
+  .symbol-item .sym-name { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .symbol-item .sym-example { font-size: 12px; color: var(--accent); font-style: italic; margin-top: 2px; }
+
+  .detail-panel {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .detail-panel .big { font-size: 48px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif; font-weight: 300; }
+  .detail-panel h3 { font-size: 16px; font-weight: 600; margin: 12px 0 6px; }
+  .detail-panel p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+  .example-words { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .example-word {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  .example-word span { font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif; color: var(--accent); }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-card .stat-num { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--accent); }
+  .stat-card .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Section titles */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+
+  /* Audio button */
+  .audio-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.15s;
+  }
+  .audio-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+
+  .hidden { display: none !important; }
+  .text-center { text-align: center; }
+  .text-muted { color: var(--text-muted); font-size: 14px; }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .mode-tabs { grid-template-columns: repeat(2, 1fr); }
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .word-display { font-size: 32px; }
+    .ipa-display { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">
+    <div class="icon">🔤</div>
+    <div>
+      <h1>IPA 音標練習</h1>
+      <p>美式英語 · 初學者</p>
+    </div>
+  </div>
+  <div class="streak-badge">
+    🔥 <span id="streakCount">0</span> 天連續
+  </div>
+</div>
+
+<div class="main">
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">今日練習</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statCorrect">0</div>
+      <div class="stat-label">答對題數</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statAccuracy">—</div>
+      <div class="stat-label">正確率</div>
+    </div>
+  </div>
+
+  <!-- Mode Tabs -->
+  <div class="mode-tabs">
+    <div class="mode-tab active" onclick="switchMode('flashcard')" id="tab-flashcard">
+      <span class="tab-icon">🃏</span>每日單字卡
+    </div>
+    <div class="mode-tab" onclick="switchMode('symbols')" id="tab-symbols">
+      <span class="tab-icon">📖</span>符號學習
+    </div>
+    <div class="mode-tab" onclick="switchMode('word-quiz')" id="tab-word-quiz">
+      <span class="tab-icon">📝</span>單字測驗
+    </div>
+    <div class="mode-tab" onclick="switchMode('ipa-quiz')" id="tab-ipa-quiz">
+      <span class="tab-icon">🎯</span>IPA測驗
+    </div>
+  </div>
+
+  <!-- ============ MODE: FLASHCARD ============ -->
+  <div id="mode-flashcard">
+    <div class="progress-text">
+      <span id="fc-progress-text">單字 1 / 10</span>
+      <span id="fc-score-text">今日進度</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="fc-progress" style="width:10%"></div>
+    </div>
+
+    <div class="flip-card-container">
+      <div class="flip-card" id="flipCard" onclick="flipCard()">
+        <div class="flip-card-front">
+          <div id="fc-meaning" class="meaning-display"></div>
+          <div id="fc-word" class="word-display"></div>
+          <div class="tap-hint">👆 點擊翻轉看音標</div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="audio-btn" onclick="speakWord(event)" title="發音">🔊</button>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div id="fc-ipa-back" class="ipa-display ipa-back"></div>
+          <div id="fc-word-back" style="font-size:20px;opacity:0.7"></div>
+          <div id="fc-desc-back" style="font-size:13px;opacity:0.6;text-align:center;max-width:200px;line-height:1.5"></div>
+          <button class="audio-btn" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);" onclick="speakWord(event)" title="發音">🔊</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row" style="margin-top:16px;">
+      <button class="btn" onclick="fcNav(-1)">← 上一個</button>
+      <button class="btn btn-primary" onclick="fcNav(1)">下一個 →</button>
+    </div>
+    <div style="margin-top:12px;">
+      <button class="btn btn-accent" onclick="shuffleFlashcards()" style="width:100%">🔀 隨機打亂順序</button>
+    </div>
+  </div>
+
+  <!-- ============ MODE: SYMBOLS ============ -->
+  <div id="mode-symbols" class="hidden">
+    <p class="text-muted" style="margin-bottom:16px">點擊任一符號查看發音說明與例字：</p>
+
+    <div class="section-title">母音 Vowels</div>
+    <div class="symbol-grid" id="vowel-grid"></div>
+
+    <div class="section-title" style="margin-top:20px">子音 Consonants</div>
+    <div class="symbol-grid" id="consonant-grid"></div>
+
+    <div class="detail-panel hidden" id="sym-detail">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div class="big" id="sym-detail-ipa"></div>
+        <div>
+          <div style="font-size:13px;color:var(--text-muted)">名稱</div>
+          <div style="font-size:18px;font-weight:600" id="sym-detail-name"></div>
+        </div>
+        <button class="audio-btn" style="margin-left:auto" onclick="speakSymbol()" title="發音">🔊</button>
+      </div>
+      <h3>發音方式</h3>
+      <p id="sym-detail-desc"></p>
+      <h3>例字</h3>
+      <div class="example-words" id="sym-detail-examples"></div>
+    </div>
+  </div>
+
+  <!-- ============ MODE: WORD QUIZ ============ -->
+  <div id="mode-word-quiz" class="hidden">
+    <div class="progress-text">
+      <span id="wq-progress-text">第 1 題</span>
+      <span id="wq-score-text">0 / 0</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="wq-progress" style="width:0%"></div>
+    </div>
+
+    <div class="card">
+      <div class="quiz-question">
+        <div class="sub">這個單字的音標是？</div>
+        <div id="wq-word" class="big-word" style="margin:12px 0"></div>
+        <div id="wq-meaning" style="font-size:14px;color:var(--text-muted)"></div>
+        <button class="audio-btn" style="margin:12px auto 0" onclick="speakCurrentWQ()">🔊</button>
+      </div>
+      <div class="options-grid" id="wq-options"></div>
+      <div class="feedback" id="wq-feedback"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-primary" id="wq-next" onclick="nextWQ()" disabled>下一題 →</button>
+    </div>
+  </div>
+
+  <!-- ============ MODE: IPA QUIZ ============ -->
+  <div id="mode-ipa-quiz" class="hidden">
+    <div class="progress-text">
+      <span id="iq-progress-text">第 1 題</span>
+      <span id="iq-score-text">0 / 0</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="iq-progress" style="width:0%"></div>
+    </div>
+
+    <div class="card">
+      <div class="quiz-question">
+        <div class="sub">這個音標對應哪個單字？</div>
+        <div id="iq-ipa" class="big-ipa" style="margin:12px 0"></div>
+        <button class="audio-btn" style="margin:8px auto 0" onclick="speakCurrentIQ()">🔊</button>
+      </div>
+      <div class="options-grid" id="iq-options"></div>
+      <div class="feedback" id="iq-feedback"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-primary" id="iq-next" onclick="nextIQ()" disabled>下一題 →</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+
+const WORDS = [
+  // Basic nouns
+  { word: "cat",    ipa: "/kæt/",    meaning: "貓",   audio: "cat",   desc: "短促的 /æ/ 音，介於ㄝ和ㄚ之間" },
+  { word: "dog",    ipa: "/dɔːɡ/",   meaning: "狗",   audio: "dog",   desc: "美式 /ɔː/ 拉長的後元音" },
+  { word: "bird",   ipa: "/bɜːrd/",  meaning: "鳥",   audio: "bird",  desc: "/ɜːr/ 是美式捲舌音" },
+  { word: "fish",   ipa: "/fɪʃ/",    meaning: "魚",   audio: "fish",  desc: "/ɪ/ 短母音，/ʃ/ 是嘘聲" },
+  { word: "book",   ipa: "/bʊk/",    meaning: "書",   audio: "book",  desc: "/ʊ/ 短促的後元音" },
+  { word: "tree",   ipa: "/triː/",   meaning: "樹",   audio: "tree",  desc: "/iː/ 拉長的高前元音" },
+  { word: "sun",    ipa: "/sʌn/",    meaning: "太陽", audio: "sun",   desc: "/ʌ/ 中央元音，類似輕聲ㄚ" },
+  { word: "moon",   ipa: "/muːn/",   meaning: "月亮", audio: "moon",  desc: "/uː/ 拉長的後高元音" },
+  { word: "hand",   ipa: "/hænd/",   meaning: "手",   audio: "hand",  desc: "/æ/ 開口前元音" },
+  { word: "food",   ipa: "/fuːd/",   meaning: "食物", audio: "food",  desc: "/uː/ 拉長的後元音" },
+  { word: "face",   ipa: "/feɪs/",   meaning: "臉",   audio: "face",  desc: "/eɪ/ 雙元音，e滑向i" },
+  { word: "time",   ipa: "/taɪm/",   meaning: "時間", audio: "time",  desc: "/aɪ/ 雙元音，a滑向i" },
+  { word: "home",   ipa: "/hoʊm/",   meaning: "家",   audio: "home",  desc: "/oʊ/ 美式雙元音" },
+  { word: "boy",    ipa: "/bɔɪ/",    meaning: "男孩", audio: "boy",   desc: "/ɔɪ/ 雙元音" },
+  { word: "now",    ipa: "/naʊ/",    meaning: "現在", audio: "now",   desc: "/aʊ/ 雙元音，a滑向u" },
+  { word: "chair",  ipa: "/tʃer/",   meaning: "椅子", audio: "chair", desc: "/tʃ/ 塞擦音" },
+  { word: "ship",   ipa: "/ʃɪp/",    meaning: "船",   audio: "ship",  desc: "/ʃ/ 嘘聲子音" },
+  { word: "think",  ipa: "/θɪŋk/",   meaning: "想",   audio: "think", desc: "/θ/ 齒間摩擦音（清）" },
+  { word: "this",   ipa: "/ðɪs/",    meaning: "這個", audio: "this",  desc: "/ð/ 齒間摩擦音（濁）" },
+  { word: "voice",  ipa: "/vɔɪs/",   meaning: "聲音", audio: "voice", desc: "/v/ 唇齒摩擦音（濁）" },
+  { word: "zoo",    ipa: "/zuː/",     meaning: "動物園",audio: "zoo",  desc: "/z/ 濁摩擦音" },
+  { word: "sing",   ipa: "/sɪŋ/",    meaning: "唱歌", audio: "sing",  desc: "/ŋ/ 鼻音，不發g" },
+  { word: "game",   ipa: "/ɡeɪm/",   meaning: "遊戲", audio: "game",  desc: "/ɡ/ 濁塞音" },
+  { word: "page",   ipa: "/peɪdʒ/",  meaning: "頁面", audio: "page",  desc: "/dʒ/ 塞擦音（濁）" },
+  { word: "water",  ipa: "/ˈwɔːtər/",meaning: "水",   audio: "water", desc: "美式彈舌音 /t/ → /ɾ/" },
+  { word: "about",  ipa: "/əˈbaʊt/", meaning: "關於", audio: "about", desc: "/ə/ 弱化中央元音（schwa）" },
+  { word: "learn",  ipa: "/lɜːrn/",  meaning: "學習", audio: "learn", desc: "/ɜːr/ 美式捲舌元音" },
+  { word: "world",  ipa: "/wɜːrld/", meaning: "世界", audio: "world", desc: "/ɜːr/ 捲舌音" },
+  { word: "people", ipa: "/ˈpiːpəl/",meaning: "人們", audio: "people",desc: "/iː/ + /ə/ 非重讀音節" },
+  { word: "phone",  ipa: "/foʊn/",   meaning: "電話", audio: "phone", desc: "/f/ 清摩擦音" },
+];
+
+const IPA_SYMBOLS = {
+  vowels: [
+    { sym: "æ",  name: "ash",       type: "vowel", ex: [["cat","/kæt/"],["hat","/hæt/"],["man","/mæn/"]], desc: "嘴巴張大，舌前位，發短促的介於ㄝ和ㄚ之間的音。類似台灣人說「ㄝ」但嘴巴更開。" },
+    { sym: "ɑː", name: "long a",    type: "vowel", ex: [["father","/ˈfɑːðər/"],["spa","/spɑː/"],["hot","/hɑːt/"]], desc: "美式英語的長母音，舌後低位，嘴大開，類似說ㄚ但更後面。注意：美式「hot」不是/hɒt/而是/hɑːt/。" },
+    { sym: "ə",  name: "schwa",     type: "vowel", ex: [["about","/əˈbaʊt/"],["sofa","/ˈsoʊfə/"],["banana","/bəˈnænə/"]], desc: "最常見的英文母音！非重讀音節的中央元音，發輕鬆的「ㄜ」，不用力，嘴微開。" },
+    { sym: "ɜːr",name: "er (美式)", type: "vowel", ex: [["bird","/bɜːrd/"],["word","/wɜːrd/"],["learn","/lɜːrn/"]], desc: "美式捲舌元音。舌尖往後捲，發「ㄜ兒」的合音。這是美式英語的特色音。" },
+    { sym: "ɪ",  name: "short i",   type: "vowel", ex: [["sit","/sɪt/"],["bit","/bɪt/"],["fish","/fɪʃ/"]], desc: "短促的高前元音，比「ㄧ」更放鬆，舌位略低。嘴型小，輕發。" },
+    { sym: "iː", name: "long ee",   type: "vowel", ex: [["see","/siː/"],["tree","/triː/"],["meet","/miːt/"]], desc: "長母音，嘴角向兩側拉，舌位高，像說「ㄧ」但更拉長更緊張。" },
+    { sym: "ʊ",  name: "short oo",  type: "vowel", ex: [["book","/bʊk/"],["good","/ɡʊd/"],["foot","/fʊt/"]], desc: "短促的後高元音，嘴唇微圓，比「ㄨ」更放鬆，像說「ㄨ」但不用力。" },
+    { sym: "uː", name: "long oo",   type: "vowel", ex: [["moon","/muːn/"],["food","/fuːd/"],["blue","/bluː/"]], desc: "長母音，嘴唇圓，舌位高後，用力發「ㄨ」並拉長。" },
+    { sym: "ʌ",  name: "short u",   type: "vowel", ex: [["sun","/sʌn/"],["cup","/kʌp/"],["love","/lʌv/"]], desc: "中央元音，嘴微開，舌位中央，輕發類似「ㄚ」的聲音，是重讀音節的短元音。" },
+    { sym: "eɪ", name: "ay diphthong",type:"vowel",ex: [["face","/feɪs/"],["day","/deɪ/"],["game","/ɡeɪm/"]], desc: "雙元音，從「ㄝ」滑向「ㄧ」的位置。嘴先微開再向兩側拉。" },
+    { sym: "aɪ", name: "i diphthong",type:"vowel", ex: [["time","/taɪm/"],["my","/maɪ/"],["night","/naɪt/"]], desc: "雙元音，從「ㄚ」滑向「ㄧ」。嘴大開再縮小向上。" },
+    { sym: "oʊ", name: "oh diphthong",type:"vowel",ex: [["home","/hoʊm/"],["go","/ɡoʊ/"],["phone","/foʊn/"]], desc: "美式雙元音，從「ㄛ」滑向「ㄨ」，嘴唇由微圓變成圓唇。" },
+    { sym: "aʊ", name: "ow diphthong",type:"vowel",ex: [["now","/naʊ/"],["out","/aʊt/"],["house","/haʊs/"]], desc: "雙元音，從「ㄚ」滑向「ㄨ」。嘴大開再縮圓。" },
+    { sym: "ɔɪ", name: "oy diphthong",type:"vowel",ex: [["boy","/bɔɪ/"],["voice","/vɔɪs/"],["coin","/kɔɪn/"]], desc: "雙元音，從「ㄛ」滑向「ㄧ」。嘴由圓唇變向兩側拉。" },
+    { sym: "ɔː", name: "aw",         type:"vowel", ex: [["dog","/dɔːɡ/"],["law","/lɔː/"],["fall","/fɔːl/"]], desc: "長後元音，嘴圓唇，舌後位。美式中有些人將此音合併成/ɑː/。" },
+  ],
+  consonants: [
+    { sym: "p",  name: "p",  type:"cons", ex: [["pen","/pen/"],["cup","/kʌp/"],["happy","/ˈhæpi/"]], desc: "雙唇清塞音，雙唇閉合後氣流爆破。字尾p較無氣音。" },
+    { sym: "b",  name: "b",  type:"cons", ex: [["bat","/bæt/"],["boy","/bɔɪ/"],["cab","/kæb/"]], desc: "雙唇濁塞音，與p相同位置但聲帶振動。" },
+    { sym: "t",  name: "t",  type:"cons", ex: [["top","/tɑːp/"],["water","/ˈwɔːtər/"],["cat","/kæt/"]], desc: "齒齦清塞音。美式英語中母音間的t常弱化為彈舌音/ɾ/（如water, butter）。" },
+    { sym: "d",  name: "d",  type:"cons", ex: [["dog","/dɔːɡ/"],["hand","/hænd/"],["bed","/bed/"]], desc: "齒齦濁塞音，與t相同位置但聲帶振動。" },
+    { sym: "k",  name: "k",  type:"cons", ex: [["cat","/kæt/"],["book","/bʊk/"],["sky","/skaɪ/"]], desc: "軟顎清塞音，舌後部抵軟顎後爆破。" },
+    { sym: "ɡ",  name: "g",  type:"cons", ex: [["go","/ɡoʊ/"],["big","/bɪɡ/"],["game","/ɡeɪm/"]], desc: "軟顎濁塞音，與k相同位置但聲帶振動。" },
+    { sym: "f",  name: "f",  type:"cons", ex: [["fish","/fɪʃ/"],["phone","/foʊn/"],["food","/fuːd/"]], desc: "唇齒清摩擦音，上齒輕咬下唇，氣流摩擦通過。" },
+    { sym: "v",  name: "v",  type:"cons", ex: [["voice","/vɔɪs/"],["love","/lʌv/"],["very","/ˈveri/"]], desc: "唇齒濁摩擦音，與f相同位置但聲帶振動。" },
+    { sym: "θ",  name: "th (清)",type:"cons",ex: [["think","/θɪŋk/"],["three","/θriː/"],["math","/mæθ/"]], desc: "齒間清摩擦音，舌尖伸出上下齒之間，氣流摩擦通過。切勿發成s或t。" },
+    { sym: "ð",  name: "th (濁)",type:"cons",ex: [["this","/ðɪs/"],["the","/ðə/"],["mother","/ˈmʌðər/"]], desc: "齒間濁摩擦音，與θ相同位置但聲帶振動，嘴型相同。" },
+    { sym: "s",  name: "s",  type:"cons", ex: [["sun","/sʌn/"],["sit","/sɪt/"],["bus","/bʌs/"]], desc: "齒齦清摩擦音，舌尖接近上齒齦，氣流摩擦通過。" },
+    { sym: "z",  name: "z",  type:"cons", ex: [["zoo","/zuː/"],["zero","/ˈzɪroʊ/"],["has","/hæz/"]], desc: "齒齦濁摩擦音，與s相同位置但聲帶振動，類似蜜蜂嗡嗡聲。" },
+    { sym: "ʃ",  name: "sh", type:"cons", ex: [["ship","/ʃɪp/"],["fish","/fɪʃ/"],["chair","/tʃer/"]], desc: "腭齦清摩擦音，舌面抬起，像說「噓」的聲音。" },
+    { sym: "ʒ",  name: "zh", type:"cons", ex: [["vision","/ˈvɪʒən/"],["measure","/ˈmeʒər/"],["genre","/ˈʒɑːnrə/"]], desc: "腭齦濁摩擦音，與ʃ相同位置但聲帶振動，較少見。" },
+    { sym: "h",  name: "h",  type:"cons", ex: [["hat","/hæt/"],["home","/hoʊm/"],["who","/huː/"]], desc: "聲門清摩擦音，只是氣息通過聲門。比中文的h更輕、更氣。" },
+    { sym: "tʃ", name: "ch", type:"cons", ex: [["chair","/tʃer/"],["church","/tʃɜːrtʃ/"],["watch","/wɑːtʃ/"]], desc: "腭齦清塞擦音，t+ʃ的結合，先閉塞再摩擦。中文「ㄔ」近似但位置稍不同。" },
+    { sym: "dʒ", name: "j",  type:"cons", ex: [["jump","/dʒʌmp/"],["page","/peɪdʒ/"],["age","/eɪdʒ/"]], desc: "腭齦濁塞擦音，d+ʒ的結合，與tʃ相同位置但聲帶振動。" },
+    { sym: "m",  name: "m",  type:"cons", ex: [["moon","/muːn/"],["home","/hoʊm/"],["time","/taɪm/"]], desc: "雙唇鼻音，雙唇閉合，氣流從鼻腔通過，聲帶振動。" },
+    { sym: "n",  name: "n",  type:"cons", ex: [["now","/naʊ/"],["hand","/hænd/"],["sun","/sʌn/"]], desc: "齒齦鼻音，舌尖貼上齒齦，氣流從鼻腔通過。" },
+    { sym: "ŋ",  name: "ng", type:"cons", ex: [["sing","/sɪŋ/"],["think","/θɪŋk/"],["song","/sɔːŋ/"]], desc: "軟顎鼻音，舌後部貼軟顎，氣流從鼻腔通過。只出現在字中或字尾，不發g音。" },
+    { sym: "l",  name: "l",  type:"cons", ex: [["love","/lʌv/"],["learn","/lɜːrn/"],["world","/wɜːrld/"]], desc: "齒齦邊音，舌尖貼上齒齦，氣流從舌的兩側通過。" },
+    { sym: "r",  name: "r",  type:"cons", ex: [["red","/red/"],["right","/raɪt/"],["bird","/bɜːrd/"]], desc: "美式英語的捲舌音，舌尖往後彎曲但不碰到任何地方。是美式英語的重要特色。" },
+    { sym: "j",  name: "y",  type:"cons", ex: [["yes","/jes/"],["you","/juː/"],["year","/jɪr/"]], desc: "腭近音，舌面抬向硬顎，發類似「ㄧ」但作為子音使用。" },
+    { sym: "w",  name: "w",  type:"cons", ex: [["water","/ˈwɔːtər/"],["world","/wɜːrld/"],["now","/naʊ/"]], desc: "唇軟顎近音，雙唇圓，舌後部抬向軟顎，快速滑向後面的元音。" },
+  ]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let stats = JSON.parse(localStorage.getItem('ipa_stats') || '{"total":0,"correct":0,"streak":0,"lastDate":""}');
+let currentMode = 'flashcard';
+let fcIndex = 0;
+let fcCards = [...WORDS];
+let fcFlipped = false;
+
+let wqIndex = 0; let wqScore = 0; let wqQuestions = [];
+let iqIndex = 0; let iqScore = 0; let iqQuestions = [];
+let currentWQWord = null; let currentIQWord = null;
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  checkStreak();
+  updateStats();
+  renderSymbols();
+  loadFlashcard();
+  generateWQ();
+  generateIQ();
+}
+
+function checkStreak() {
+  const today = new Date().toDateString();
+  if (stats.lastDate !== today) {
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (stats.lastDate === yesterday) {
+      // streak continues, don't reset
+    } else if (stats.lastDate !== today) {
+      stats.streak = stats.streak || 0;
+    }
+    stats.lastDate = today;
+    saveStats();
+  }
+  document.getElementById('streakCount').textContent = stats.streak;
+}
+
+function saveStats() {
+  localStorage.setItem('ipa_stats', JSON.stringify(stats));
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = stats.total || 0;
+  document.getElementById('statCorrect').textContent = stats.correct || 0;
+  const acc = stats.total > 0 ? Math.round(stats.correct / stats.total * 100) + '%' : '—';
+  document.getElementById('statAccuracy').textContent = acc;
+  document.getElementById('streakCount').textContent = stats.streak || 0;
+}
+
+function recordAnswer(correct) {
+  stats.total++;
+  if (correct) stats.correct++;
+  const today = new Date().toDateString();
+  if (stats.lastDate !== today) {
+    stats.streak = (stats.lastDate === new Date(Date.now()-86400000).toDateString()) ? stats.streak + 1 : 1;
+    stats.lastDate = today;
+  }
+  saveStats();
+  updateStats();
+}
+
+// ============================================================
+// MODE SWITCH
+// ============================================================
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + mode).classList.add('active');
+  ['flashcard','symbols','word-quiz','ipa-quiz'].forEach(m => {
+    const el = document.getElementById('mode-' + m);
+    el && el.classList.toggle('hidden', m !== mode);
+  });
+  currentMode = mode;
+  if (mode === 'word-quiz' && wqQuestions.length === 0) generateWQ();
+  if (mode === 'ipa-quiz' && iqQuestions.length === 0) generateIQ();
+}
+
+// ============================================================
+// FLASHCARD
+// ============================================================
+function loadFlashcard() {
+  const w = fcCards[fcIndex];
+  fcFlipped = false;
+  document.getElementById('flipCard').classList.remove('flipped');
+  document.getElementById('fc-word').textContent = w.word;
+  document.getElementById('fc-meaning').textContent = w.meaning;
+  document.getElementById('fc-ipa-back').textContent = w.ipa;
+  document.getElementById('fc-word-back').textContent = w.word;
+  document.getElementById('fc-desc-back').textContent = w.desc;
+  const p = ((fcIndex + 1) / fcCards.length * 100).toFixed(0);
+  document.getElementById('fc-progress').style.width = p + '%';
+  document.getElementById('fc-progress-text').textContent = `單字 ${fcIndex+1} / ${fcCards.length}`;
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('flipCard').classList.toggle('flipped', fcFlipped);
+  if (fcFlipped) speakWordText(fcCards[fcIndex].word);
+}
+
+function fcNav(dir) {
+  fcIndex = (fcIndex + dir + fcCards.length) % fcCards.length;
+  loadFlashcard();
+}
+
+function shuffleFlashcards() {
+  fcCards = [...WORDS].sort(() => Math.random() - 0.5);
+  fcIndex = 0;
+  loadFlashcard();
+}
+
+function speakWord(e) {
+  e.stopPropagation();
+  speakWordText(fcCards[fcIndex].word);
+}
+
+// ============================================================
+// SYMBOLS
+// ============================================================
+function renderSymbols() {
+  renderSymGroup('vowel-grid', IPA_SYMBOLS.vowels);
+  renderSymGroup('consonant-grid', IPA_SYMBOLS.consonants);
+}
+
+function renderSymGroup(gridId, items) {
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  items.forEach((s, i) => {
+    const div = document.createElement('div');
+    div.className = 'symbol-item';
+    div.id = 'sym-' + s.sym;
+    div.innerHTML = `<div class="sym">${s.sym}</div><div class="sym-name">${s.name}</div><div class="sym-example">${s.ex[0][0]}</div>`;
+    div.onclick = () => showSymDetail(s);
+    grid.appendChild(div);
+  });
+}
+
+let currentSymbol = null;
+function showSymDetail(s) {
+  currentSymbol = s;
+  document.querySelectorAll('.symbol-item').forEach(el => el.classList.remove('active-sym'));
+  const el = document.getElementById('sym-' + s.sym);
+  if (el) el.classList.add('active-sym');
+  const panel = document.getElementById('sym-detail');
+  panel.classList.remove('hidden');
+  document.getElementById('sym-detail-ipa').textContent = '/' + s.sym + '/';
+  document.getElementById('sym-detail-name').textContent = s.name;
+  document.getElementById('sym-detail-desc').textContent = s.desc;
+  const exDiv = document.getElementById('sym-detail-examples');
+  exDiv.innerHTML = s.ex.map(([w,i]) => `<div class="example-word">${w} <span>${i}</span></div>`).join('');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  speakWordText(s.ex[0][0]);
+}
+
+function speakSymbol() {
+  if (currentSymbol) speakWordText(currentSymbol.ex[0][0]);
+}
+
+// ============================================================
+// WORD QUIZ
+// ============================================================
+function generateWQ() {
+  wqQuestions = shuffleArr([...WORDS]).slice(0, 10);
+  wqIndex = 0; wqScore = 0;
+  loadWQ();
+}
+
+function loadWQ() {
+  if (wqIndex >= wqQuestions.length) { showWQResult(); return; }
+  const q = wqQuestions[wqIndex];
+  currentWQWord = q;
+  document.getElementById('wq-word').textContent = q.word;
+  document.getElementById('wq-meaning').textContent = q.meaning;
+  const p = (wqIndex / wqQuestions.length * 100).toFixed(0);
+  document.getElementById('wq-progress').style.width = p + '%';
+  document.getElementById('wq-progress-text').textContent = `第 ${wqIndex+1} / ${wqQuestions.length} 題`;
+  document.getElementById('wq-score-text').textContent = `${wqScore} / ${wqIndex}`;
+
+  // Generate 4 options
+  const wrong = shuffleArr(WORDS.filter(w => w.word !== q.word)).slice(0, 3);
+  const opts = shuffleArr([q, ...wrong]);
+  const grid = document.getElementById('wq-options');
+  grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `${opt.ipa}<span class="option-word">${opt.word}</span>`;
+    btn.onclick = () => checkWQ(btn, opt, q);
+    grid.appendChild(btn);
+  });
+
+  const fb = document.getElementById('wq-feedback');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('wq-next').disabled = true;
+}
+
+function checkWQ(btn, selected, correct) {
+  if (document.getElementById('wq-next').disabled === false) return;
+  const isCorrect = selected.word === correct.word;
+  recordAnswer(isCorrect);
+  if (isCorrect) wqScore++;
+
+  document.querySelectorAll('#wq-options .option-btn').forEach(b => {
+    b.disabled = true;
+    if (b.innerHTML.includes(correct.ipa)) b.classList.add('correct');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+
+  const fb = document.getElementById('wq-feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  fb.textContent = isCorrect ? `✓ 正確！${correct.word} 的音標是 ${correct.ipa}` : `✗ 正確答案是 ${correct.ipa}（${correct.desc}）`;
+  document.getElementById('wq-next').disabled = false;
+  speakWordText(correct.word);
+}
+
+function nextWQ() {
+  wqIndex++;
+  loadWQ();
+}
+
+function speakCurrentWQ() {
+  if (currentWQWord) speakWordText(currentWQWord.word);
+}
+
+function showWQResult() {
+  const pct = Math.round(wqScore / wqQuestions.length * 100);
+  const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
+  document.getElementById('wq-word').innerHTML = `<span style="font-size:48px">${emoji}</span>`;
+  document.getElementById('wq-meaning').textContent = `本輪得分：${wqScore} / ${wqQuestions.length}（${pct}%）`;
+  document.getElementById('wq-options').innerHTML = '';
+  document.getElementById('wq-feedback').className = 'feedback';
+  document.getElementById('wq-next').textContent = '🔄 重新開始';
+  document.getElementById('wq-next').disabled = false;
+  document.getElementById('wq-next').onclick = () => { generateWQ(); document.getElementById('wq-next').textContent = '下一題 →'; document.getElementById('wq-next').onclick = nextWQ; };
+}
+
+// ============================================================
+// IPA QUIZ
+// ============================================================
+function generateIQ() {
+  iqQuestions = shuffleArr([...WORDS]).slice(0, 10);
+  iqIndex = 0; iqScore = 0;
+  loadIQ();
+}
+
+function loadIQ() {
+  if (iqIndex >= iqQuestions.length) { showIQResult(); return; }
+  const q = iqQuestions[iqIndex];
+  currentIQWord = q;
+  document.getElementById('iq-ipa').textContent = q.ipa;
+  const p = (iqIndex / iqQuestions.length * 100).toFixed(0);
+  document.getElementById('iq-progress').style.width = p + '%';
+  document.getElementById('iq-progress-text').textContent = `第 ${iqIndex+1} / ${iqQuestions.length} 題`;
+  document.getElementById('iq-score-text').textContent = `${iqScore} / ${iqIndex}`;
+
+  const wrong = shuffleArr(WORDS.filter(w => w.word !== q.word)).slice(0, 3);
+  const opts = shuffleArr([q, ...wrong]);
+  const grid = document.getElementById('iq-options');
+  grid.innerHTML = '';
+  opts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `${opt.word}<span class="option-word">${opt.meaning}</span>`;
+    btn.style.fontFamily = '-apple-system, sans-serif';
+    btn.style.fontSize = '20px';
+    btn.onclick = () => checkIQ(btn, opt, q);
+    grid.appendChild(btn);
+  });
+
+  const fb = document.getElementById('iq-feedback');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('iq-next').disabled = true;
+}
+
+function checkIQ(btn, selected, correct) {
+  if (document.getElementById('iq-next').disabled === false) return;
+  const isCorrect = selected.word === correct.word;
+  recordAnswer(isCorrect);
+  if (isCorrect) iqScore++;
+
+  document.querySelectorAll('#iq-options .option-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.trim().startsWith(correct.word)) b.classList.add('correct');
+  });
+  if (!isCorrect) btn.classList.add('wrong');
+
+  const fb = document.getElementById('iq-feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
+  fb.textContent = isCorrect ? `✓ 正確！${correct.ipa} = ${correct.word}（${correct.meaning}）` : `✗ 正確答案是 ${correct.word}（${correct.meaning}）`;
+  document.getElementById('iq-next').disabled = false;
+  speakWordText(correct.word);
+}
+
+function nextIQ() {
+  iqIndex++;
+  loadIQ();
+}
+
+function speakCurrentIQ() {
+  if (currentIQWord) speakWordText(currentIQWord.word);
+}
+
+function showIQResult() {
+  const pct = Math.round(iqScore / iqQuestions.length * 100);
+  const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
+  document.getElementById('iq-ipa').innerHTML = `<span style="font-size:48px">${emoji}</span>`;
+  document.getElementById('iq-options').innerHTML = `<div class="text-center text-muted" style="grid-column:span 2">本輪得分：${iqScore} / ${iqQuestions.length}（${pct}%）</div>`;
+  document.getElementById('iq-feedback').className = 'feedback';
+  document.getElementById('iq-next').textContent = '🔄 重新開始';
+  document.getElementById('iq-next').disabled = false;
+  document.getElementById('iq-next').onclick = () => { generateIQ(); document.getElementById('iq-next').textContent = '下一題 →'; document.getElementById('iq-next').onclick = nextIQ; };
+}
+
+// ============================================================
+// SPEECH
+// ============================================================
+function speakWordText(word) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(word);
+  utter.lang = 'en-US';
+  utter.rate = 0.85;
+  utter.pitch = 1.0;
+  // Prefer an American voice
+  const voices = window.speechSynthesis.getVoices();
+  const american = voices.find(v => v.lang === 'en-US' && (v.name.includes('Samantha') || v.name.includes('Alex') || v.name.includes('US')));
+  if (american) utter.voice = american;
+  window.speechSynthesis.speak(utter);
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function shuffleArr(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Load voices asynchronously
+window.speechSynthesis.onvoiceschanged = () => {};
+
+init();
+</script>
+</body>
+</html>
