@@ -279,7 +279,7 @@
 
   /* Feedback */
   .feedback {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
@@ -288,8 +288,11 @@
     font-weight: 500;
     font-size: 15px;
     gap: 12px;
+    visibility: hidden;
+    background: var(--surface-2);
+    min-height: 56px;
   }
-  .feedback.show { display: flex; }
+  .feedback.show { visibility: visible; }
   .feedback.correct-fb { background: var(--success-light); color: #16a34a; }
   .feedback.wrong-fb { background: var(--error-light); color: #dc2626; }
   .feedback-next {
@@ -689,8 +692,8 @@ let fcIndex = 0;
 let fcCards = [...WORDS];
 let fcFlipped = false;
 
-let wqIndex = 0; let wqScore = 0; let wqQuestions = [];
-let iqIndex = 0; let iqScore = 0; let iqQuestions = [];
+let wqIndex = 0; let wqScore = 0; let wqQuestions = []; let wqAnswered = false;
+let iqIndex = 0; let iqScore = 0; let iqQuestions = []; let iqAnswered = false;
 let currentWQWord = null; let currentIQWord = null;
 
 // ============================================================
@@ -873,11 +876,13 @@ function loadWQ() {
   });
 
   const fb = document.getElementById('wq-feedback');
-  fb.className = 'feedback'; fb.innerHTML = '';
+  fb.className = 'feedback'; fb.innerHTML = ''; fb.style.background = '';
+  wqAnswered = false;
 }
 
 function checkWQ(btn, selected, correct) {
-  if (document.getElementById('wq-next').disabled === false) return;
+  if (wqAnswered) return;
+  wqAnswered = true;
   const isCorrect = selected.word === correct.word;
   recordAnswer(isCorrect);
   if (isCorrect) wqScore++;
@@ -950,12 +955,13 @@ function loadIQ() {
   });
 
   const fb = document.getElementById('iq-feedback');
-  fb.className = 'feedback'; fb.textContent = '';
-  document.getElementById('iq-next').disabled = true;
+  fb.className = 'feedback'; fb.innerHTML = ''; fb.style.background = '';
+  iqAnswered = false;
 }
 
 function checkIQ(btn, selected, correct) {
-  if (document.getElementById('iq-next').disabled === false) return;
+  if (iqAnswered) return;
+  iqAnswered = true;
   const isCorrect = selected.word === correct.word;
   recordAnswer(isCorrect);
   if (isCorrect) iqScore++;
