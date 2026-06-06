@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>美式英語 IPA 音標練習</title>
+<link rel="icon" type="image/png" href="ChatGPT Image 2026年6月6日 下午04_57_51.png">
 <style>
   :root {
     --bg: #fafafa;
@@ -278,17 +279,32 @@
 
   /* Feedback */
   .feedback {
-    text-align: center;
-    padding: 16px;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
     border-radius: var(--radius-sm);
     margin-top: 16px;
     font-weight: 500;
     font-size: 15px;
-    display: none;
+    gap: 12px;
   }
-  .feedback.show { display: block; }
+  .feedback.show { display: flex; }
   .feedback.correct-fb { background: var(--success-light); color: #16a34a; }
   .feedback.wrong-fb { background: var(--error-light); color: #dc2626; }
+  .feedback-next {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.15s;
+  }
+  .correct-fb .feedback-next { background: #16a34a; color: white; }
+  .wrong-fb .feedback-next { background: #dc2626; color: white; }
+  .feedback-next:hover { opacity: 0.8; }
 
   /* Navigation buttons */
   .nav-row {
@@ -554,10 +570,6 @@
       <div class="options-grid" id="wq-options"></div>
       <div class="feedback" id="wq-feedback"></div>
     </div>
-
-    <div class="nav-row">
-      <button class="btn btn-primary" id="wq-next" onclick="nextWQ()" disabled>下一題 →</button>
-    </div>
   </div>
 
   <!-- ============ MODE: IPA QUIZ ============ -->
@@ -578,10 +590,6 @@
       </div>
       <div class="options-grid" id="iq-options"></div>
       <div class="feedback" id="iq-feedback"></div>
-    </div>
-
-    <div class="nav-row">
-      <button class="btn btn-primary" id="iq-next" onclick="nextIQ()" disabled>下一題 →</button>
     </div>
   </div>
 
@@ -824,7 +832,6 @@ function showSymDetail(s) {
   document.getElementById('sym-detail-desc').textContent = s.desc;
   const exDiv = document.getElementById('sym-detail-examples');
   exDiv.innerHTML = s.ex.map(([w,i]) => `<div class="example-word">${w} <span>${i}</span></div>`).join('');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   speakWordText(s.ex[0][0]);
 }
 
@@ -866,8 +873,7 @@ function loadWQ() {
   });
 
   const fb = document.getElementById('wq-feedback');
-  fb.className = 'feedback'; fb.textContent = '';
-  document.getElementById('wq-next').disabled = true;
+  fb.className = 'feedback'; fb.innerHTML = '';
 }
 
 function checkWQ(btn, selected, correct) {
@@ -883,14 +889,15 @@ function checkWQ(btn, selected, correct) {
   if (!isCorrect) btn.classList.add('wrong');
 
   const fb = document.getElementById('wq-feedback');
+  const msg = isCorrect ? `✓ 正確！${correct.word} 的音標是 ${correct.ipa}` : `✗ 正確答案是 ${correct.ipa}（${correct.desc}）`;
   fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
-  fb.textContent = isCorrect ? `✓ 正確！${correct.word} 的音標是 ${correct.ipa}` : `✗ 正確答案是 ${correct.ipa}（${correct.desc}）`;
-  document.getElementById('wq-next').disabled = false;
+  fb.innerHTML = `<span>${msg}</span><button class="feedback-next" onclick="nextWQ()">→</button>`;
   speakWordText(correct.word);
 }
 
 function nextWQ() {
   wqIndex++;
+  if (wqIndex >= wqQuestions.length) { showWQResult(); return; }
   loadWQ();
 }
 
@@ -904,10 +911,9 @@ function showWQResult() {
   document.getElementById('wq-word').innerHTML = `<span style="font-size:48px">${emoji}</span>`;
   document.getElementById('wq-meaning').textContent = `本輪得分：${wqScore} / ${wqQuestions.length}（${pct}%）`;
   document.getElementById('wq-options').innerHTML = '';
-  document.getElementById('wq-feedback').className = 'feedback';
-  document.getElementById('wq-next').textContent = '🔄 重新開始';
-  document.getElementById('wq-next').disabled = false;
-  document.getElementById('wq-next').onclick = () => { generateWQ(); document.getElementById('wq-next').textContent = '下一題 →'; document.getElementById('wq-next').onclick = nextWQ; };
+  const fb = document.getElementById('wq-feedback');
+  fb.className = 'feedback show correct-fb';
+  fb.innerHTML = `<span>🔄 重新開始</span><button class="feedback-next" onclick="generateWQ()">→</button>`;
 }
 
 // ============================================================
@@ -961,14 +967,15 @@ function checkIQ(btn, selected, correct) {
   if (!isCorrect) btn.classList.add('wrong');
 
   const fb = document.getElementById('iq-feedback');
+  const msg = isCorrect ? `✓ 正確！${correct.ipa} = ${correct.word}（${correct.meaning}）` : `✗ 正確答案是 ${correct.word}（${correct.meaning}）`;
   fb.className = 'feedback show ' + (isCorrect ? 'correct-fb' : 'wrong-fb');
-  fb.textContent = isCorrect ? `✓ 正確！${correct.ipa} = ${correct.word}（${correct.meaning}）` : `✗ 正確答案是 ${correct.word}（${correct.meaning}）`;
-  document.getElementById('iq-next').disabled = false;
+  fb.innerHTML = `<span>${msg}</span><button class="feedback-next" onclick="nextIQ()">→</button>`;
   speakWordText(correct.word);
 }
 
 function nextIQ() {
   iqIndex++;
+  if (iqIndex >= iqQuestions.length) { showIQResult(); return; }
   loadIQ();
 }
 
@@ -980,11 +987,10 @@ function showIQResult() {
   const pct = Math.round(iqScore / iqQuestions.length * 100);
   const emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
   document.getElementById('iq-ipa').innerHTML = `<span style="font-size:48px">${emoji}</span>`;
-  document.getElementById('iq-options').innerHTML = `<div class="text-center text-muted" style="grid-column:span 2">本輪得分：${iqScore} / ${iqQuestions.length}（${pct}%）</div>`;
-  document.getElementById('iq-feedback').className = 'feedback';
-  document.getElementById('iq-next').textContent = '🔄 重新開始';
-  document.getElementById('iq-next').disabled = false;
-  document.getElementById('iq-next').onclick = () => { generateIQ(); document.getElementById('iq-next').textContent = '下一題 →'; document.getElementById('iq-next').onclick = nextIQ; };
+  document.getElementById('iq-options').innerHTML = '';
+  const fb = document.getElementById('iq-feedback');
+  fb.className = 'feedback show correct-fb';
+  fb.innerHTML = `<span>本輪得分：${iqScore} / ${iqQuestions.length}（${pct}%）🔄 重新開始</span><button class="feedback-next" onclick="generateIQ()">→</button>`;
 }
 
 // ============================================================
